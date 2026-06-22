@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin &middot; Federal Ministry of Women Affairs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#1B8A4A;
+    --green-dark:#0F5C32;
+    --ochre:#E0A52E;
+    --cream:#FBF8F2;
+    --terracotta:#C7512E;
+    --wine:#9C3D5C;
+    --sage:#E8F3EC;
+    --ink:#232323;
+    --line:#D9D2C2;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:'Inter',sans-serif; background:var(--cream); color:var(--ink); line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:'Fraunces',serif;font-weight:600;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  /* Top bar */
+  .topbar{
+    background:var(--green-dark); color:var(--cream); padding:14px 24px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .topbar-brand{font-family:'Fraunces',serif; font-size:16px; font-weight:600;}
+  .topbar-brand span{color:var(--ochre);}
+  #logoutBtn{
+    background:none; border:1px solid rgba(255,255,255,.3); color:var(--cream);
+    padding:7px 16px; border-radius:4px; font-size:13px; cursor:pointer; display:none;
+  }
+  #logoutBtn:hover{background:rgba(255,255,255,.1);}
+
+  /* Login screen */
+  .login-wrap{
+    min-height:calc(100vh - 56px); display:flex; align-items:center; justify-content:center; padding:24px;
+  }
+  .login-card{
+    background:#fff; border:1px solid var(--line); border-radius:8px; padding:40px 36px;
+    max-width:400px; width:100%; box-shadow:0 20px 50px -24px rgba(27,67,50,.25);
+  }
+  .login-card h1{font-size:24px; margin-bottom:6px; color:var(--green-dark);}
+  .login-card p.sub{font-size:13.5px; color:#666; margin-bottom:28px;}
+  label{display:block; font-size:12.5px; font-weight:600; color:var(--green-dark); margin-bottom:6px; text-transform:uppercase; letter-spacing:.04em;}
+  input[type="email"], input[type="password"], input[type="number"], select, textarea{
+    width:100%; padding:12px 14px; border:1px solid var(--line); border-radius:4px; font-size:15px;
+    margin-bottom:18px; font-family:'Inter',sans-serif; background:#fff;
+  }
+  input:focus, select:focus, textarea:focus{outline:none; border-color:var(--green);}
+  .btn{
+    width:100%; padding:13px; border:none; border-radius:4px; background:var(--green);
+    color:#fff; font-weight:600; font-size:15px; cursor:pointer; transition:background .15s ease;
+  }
+  .btn:hover{background:var(--green-dark);}
+  .btn-ochre{background:var(--ochre); color:var(--green-dark);}
+  .btn-ochre:hover{background:#F0B23E;}
+  #loginError{color:var(--terracotta); font-size:13.5px; margin-top:14px; display:none;}
+
+  /* Dashboard */
+  #dashboard{display:none; max-width:880px; margin:0 auto; padding:40px 24px;}
+  .role-badge{
+    display:inline-flex; align-items:center; gap:8px; background:var(--sage); color:var(--green-dark);
+    padding:6px 14px; border-radius:20px; font-family:'IBM Plex Mono',monospace; font-size:12px;
+    margin-bottom:28px;
+  }
+  .dot{width:7px; height:7px; border-radius:50%; background:var(--green);}
+  .card{
+    background:#fff; border:1px solid var(--line); border-radius:8px; padding:28px; margin-bottom:24px;
+  }
+  .card h2{font-size:19px; margin-bottom:6px;}
+  .card p.desc{font-size:13.5px; color:#666; margin-bottom:20px;}
+  .row-2{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  @media (max-width:560px){.row-2{grid-template-columns:1fr;}}
+  #submitMsg{font-size:13.5px; margin-top:10px; display:none; padding:10px 14px; border-radius:4px;}
+  #submitMsg.ok{background:#E6F4EA; color:#1B6B36; display:block;}
+  #submitMsg.err{background:#FBE9E4; color:#9C3D2A; display:block;}
+
+  .pending-row{
+    display:flex; justify-content:space-between; align-items:center; padding:12px 0;
+    border-bottom:1px solid var(--line); font-size:14px;
+  }
+  .pending-row:last-child{border-bottom:none;}
+  .pending-meta{font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:#888;}
+  .status-pill{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; padding:3px 10px; border-radius:12px;
+    text-transform:uppercase;
+  }
+  .status-pending{background:#FCEFD8; color:#946200;}
+  .status-approved{background:#E6F4EA; color:#1B6B36;}
+  .approve-btn{
+    background:var(--green); color:#fff; border:none; padding:6px 14px; border-radius:4px;
+    font-size:12.5px; cursor:pointer; margin-left:10px;
+  }
+  .approve-btn:hover{background:var(--green-dark);}
+  #emptyState{font-size:13.5px; color:#888; padding:8px 0;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-brand">FMWA <span>Situation Room</span> &middot; Admin</div>
+  <button id="logoutBtn">Log out</button>
+</div>
+
+<div class="login-wrap" id="loginWrap">
+  <div class="login-card">
+    <h1>Admin Sign In</h1>
+    <p class="sub">Authorised personnel only. Use the account created for you in Firebase Authentication.</p>
+    <label for="email">Email</label>
+    <input type="email" id="email" placeholder="you@womenaffairs.gov.ng" autocomplete="username">
+    <label for="password">Password</label>
+    <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
+    <button class="btn" id="loginBtn">Sign In</button>
+    <p id="loginError"></p>
+  </div>
+</div>
+
+<div id="dashboard">
+  <div class="role-badge"><span class="dot"></span><span id="roleText">Loading role...</span></div>
+
+  <div class="card">
+    <h2>Submit a State Indicator Update</h2>
+    <p class="desc">This does <strong>not</strong> go live immediately. It enters Pending Review, exactly as described in the build spec's approval workflow, until a Ministry Administrator approves it.</p>
+    <div class="row-2">
+      <div>
+        <label for="stateSelect">State</label>
+        <select id="stateSelect">
+          <option>Borno</option><option>Yobe</option><option>Adamawa</option>
+          <option>FCT</option><option>Lagos</option><option>Kano</option><option>Rivers</option>
+        </select>
+      </div>
+      <div>
+        <label for="indicatorSelect">Indicator</label>
+        <select id="indicatorSelect">
+          <option value="idp_count">IDP Count</option>
+          <option value="gbv_cases">GBV Cases</option>
+          <option value="support_centres">Active Support Centres</option>
+          <option value="relief_materials">Relief Materials Distributed</option>
+        </select>
+      </div>
+    </div>
+    <label for="newValue">New Value</label>
+    <input type="number" id="newValue" placeholder="e.g. 6">
+    <label for="reason">Reason / Source for Change</label>
+    <textarea id="reason" rows="2" placeholder="e.g. Verified by state field officer, 19 June 2026"></textarea>
+    <button class="btn btn-ochre" id="submitUpdateBtn">Submit for Review</button>
+    <p id="submitMsg"></p>
+  </div>
+
+  <div class="card">
+    <h2>Pending Review Queue</h2>
+    <p class="desc">Visible to all signed-in staff. Only a Ministry Administrator role can approve.</p>
+    <div id="pendingList"><p id="emptyState">Loading...</p></div>
+  </div>
+</div>
+
+<script type="module">
+  import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+  const SUPABASE_URL = "https://yxoilhablmbqpotuqmjv.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_-Uix1i0CWZIzHCxQ4qK1rw_oP_b4dNp";
+  const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  const loginWrap = document.getElementById('loginWrap');
+  const dashboard = document.getElementById('dashboard');
+  const logoutBtn = document.getElementById('logoutBtn');
+  const loginBtn = document.getElementById('loginBtn');
+  const loginError = document.getElementById('loginError');
+  const roleText = document.getElementById('roleText');
+
+  async function showDashboard(user) {
+    loginWrap.style.display = 'none';
+    dashboard.style.display = 'block';
+    logoutBtn.style.display = 'inline-block';
+
+    let { data: profile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .maybeSingle();
+
+    if (!profile) {
+      await supabase.from('profiles').insert({ id: user.id, email: user.email, role: 'Viewer' });
+      const { data: newProfile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .maybeSingle();
+      profile = newProfile;
+    }
+
+    roleText.textContent = `${profile.email} · ${profile.role}`;
+    window.__currentRole = profile.role;
+    loadPending();
+  }
+
+  function showLogin() {
+    loginWrap.style.display = 'flex';
+    dashboard.style.display = 'none';
+    logoutBtn.style.display = 'none';
+  }
+
+  // Check session on load
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    if (session) showDashboard(session.user);
+    else showLogin();
+  });
+
+  supabase.auth.onAuthStateChange((_event, session) => {
+    if (session) showDashboard(session.user);
+    else showLogin();
+  });
+
+  loginBtn.addEventListener('click', async () => {
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    loginError.style.display = 'none';
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      loginError.textContent = "Sign-in failed: " + error.message;
+      loginError.style.display = 'block';
+    }
+  });
+
+  logoutBtn.addEventListener('click', async () => {
+    await supabase.auth.signOut();
+  });
+
+  // Submit a pending update
+  document.getElementById('submitUpdateBtn').addEventListener('click', async () => {
+    const state = document.getElementById('stateSelect').value;
+    const indicator = document.getElementById('indicatorSelect').value;
+    const newValue = document.getElementById('newValue').value;
+    const reason = document.getElementById('reason').value.trim();
+    const msg = document.getElementById('submitMsg');
+
+    if (!newValue || !reason) {
+      msg.textContent = "Please fill in both the new value and a reason/source.";
+      msg.className = 'err';
+      return;
+    }
+
+    const { data: { user } } = await supabase.auth.getUser();
+    const { error } = await supabase.from('pending_updates').insert({
+      state, indicator, new_value: Number(newValue), reason,
+      status: 'pending',
+      submitted_by: user.email
+    });
+
+    if (error) {
+      msg.textContent = "Error submitting: " + error.message;
+      msg.className = 'err';
+    } else {
+      msg.textContent = "Submitted. This will stay in Pending Review until approved.";
+      msg.className = 'ok';
+      document.getElementById('newValue').value = '';
+      document.getElementById('reason').value = '';
+      loadPending();
+    }
+  });
+
+  const pendingList = document.getElementById('pendingList');
+
+  async function loadPending() {
+    const { data, error } = await supabase
+      .from('pending_updates')
+      .select('*')
+      .order('submitted_at', { ascending: false });
+
+    if (error || !data || data.length === 0) {
+      pendingList.innerHTML = '<p id="emptyState">No pending updates right now.</p>';
+      return;
+    }
+
+    pendingList.innerHTML = '';
+    data.forEach((d) => {
+      const row = document.createElement('div');
+      row.className = 'pending-row';
+      const statusClass = d.status === 'approved' ? 'status-approved' : 'status-pending';
+      row.innerHTML = `
+        <div>
+          <strong>${d.state}</strong> · ${d.indicator.replace('_',' ')} → <span class="mono">${d.new_value}</span>
+          <div class="pending-meta">${d.submitted_by || ''} · ${d.reason || ''}</div>
+        </div>
+        <div>
+          <span class="status-pill ${statusClass}">${d.status}</span>
+          ${d.status === 'pending' ? `<button class="approve-btn" data-id="${d.id}">Approve</button>` : ''}
+        </div>
+      `;
+      pendingList.appendChild(row);
+    });
+    renderApproveButtons();
+  }
+
+  function renderApproveButtons() {
+    document.querySelectorAll('.approve-btn').forEach(btn => {
+      btn.onclick = async () => {
+        if (window.__currentRole !== 'Ministry Administrator' && window.__currentRole !== 'Super Administrator') {
+          alert("Only a Ministry Administrator or Super Administrator can approve updates. Your current role is: " + window.__currentRole);
+          return;
+        }
+        const id = btn.getAttribute('data-id');
+        const { data: { user } } = await supabase.auth.getUser();
+        const { error } = await supabase
+          .from('pending_updates')
+          .update({ status: 'approved', approved_by: user.email, approved_at: new Date().toISOString() })
+          .eq('id', id);
+        if (error) {
+          alert("Could not approve: " + error.message);
+        } else {
+          loadPending();
+        }
+      };
+    });
+  }
+
+  // Realtime: refresh list whenever pending_updates changes
+  supabase
+    .channel('pending_updates_changes')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'pending_updates' }, () => {
+      loadPending();
+    })
+    .subscribe();
+</script>
+
+</body>
+</html>
