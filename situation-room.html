@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Situation Room &middot; Federal Ministry of Women Affairs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#1B8A4A; --green-dark:#0F5C32; --ochre:#E0A52E; --cream:#FBF8F2;
+    --terracotta:#C7512E; --wine:#9C3D5C; --sage:#E8F3EC; --ink:#232323; --line:#D9D2C2;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',sans-serif; background:var(--cream); color:var(--ink); line-height:1.6; -webkit-font-smoothing:antialiased;}
+  h1,h2,h3{font-family:'Fraunces',serif;font-weight:600;}
+  a{color:inherit;text-decoration:none;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px;}
+
+  header{position:sticky; top:0; z-index:50; background:var(--cream); border-bottom:1px solid var(--line);}
+  .navbar{display:flex; align-items:center; justify-content:space-between; padding:14px 24px; max-width:1180px; margin:0 auto;}
+  .brand{display:flex; align-items:center; gap:10px;}
+  .brand-mark-img{width:38px; height:38px; object-fit:contain; flex-shrink:0;}
+  .brand-text{font-size:14px; line-height:1.25;}
+  .brand-text strong{display:block; font-size:15px;}
+  nav a{font-size:14px; font-weight:500; color:var(--green-dark);}
+  nav a:hover{color:var(--ochre);}
+
+  .page-hero{background:var(--terracotta); color:var(--cream); padding:48px 0;}
+  .page-hero .eyebrow{font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:#FBD8C9; margin-bottom:10px;}
+  .page-hero h1{font-size:clamp(26px,3.6vw,38px);}
+  .page-hero p{margin-top:10px; max-width:640px; color:#F3DCD3; font-size:15px;}
+  .live-tag{display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.3); border-radius:20px; padding:6px 14px; font-family:'IBM Plex Mono',monospace; font-size:12px; margin-top:16px;}
+  .pulse{width:7px; height:7px; border-radius:50%; background:#9FE0BB; display:inline-block; animation:pulse 1.8s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;} 50%{opacity:.35;}}
+
+  section{padding:44px 0;}
+  .section-eyebrow{font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--green-dark); margin-bottom:10px;}
+  section h2{font-size:clamp(20px,2.6vw,26px); margin-bottom:6px;}
+  .section-sub{font-size:14px; color:#666; margin-bottom:24px;}
+
+  /* National cards */
+  .nat-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:16px;}
+  .nat-card{background:#fff; border:1px solid var(--line); border-radius:8px; padding:20px;}
+  .nat-card .label{font-size:12.5px; color:#666; margin-bottom:8px;}
+  .nat-card .value{font-family:'IBM Plex Mono',monospace; font-size:28px; color:var(--green-dark); font-weight:500;}
+  .nat-card .value.empty{font-size:14px; color:#999; font-weight:400;}
+  @media (max-width:880px){.nat-grid{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:520px){.nat-grid{grid-template-columns:1fr;}}
+
+  /* Filter bar */
+  .filter-bar{display:flex; gap:12px; margin-bottom:24px; flex-wrap:wrap; align-items:center;}
+  #stateSearch{
+    flex:1; min-width:200px; padding:11px 14px; border:1px solid var(--line); border-radius:4px; font-size:14.5px;
+    font-family:'Inter',sans-serif;
+  }
+  #stateSearch:focus{outline:none; border-color:var(--green);}
+  .filter-count{font-size:13px; color:#777; font-family:'IBM Plex Mono',monospace;}
+
+  /* State grid */
+  .state-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+  .state-card{
+    background:#fff; border:1px solid var(--line); border-radius:8px; padding:18px;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .state-card:hover{transform:translateY(-3px); box-shadow:0 12px 24px -16px rgba(27,67,50,.3);}
+  .state-card.has-data{border-color:var(--green);}
+  .state-name{font-size:16px; font-weight:600; color:var(--green-dark); margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;}
+  .verified-dot{width:7px; height:7px; border-radius:50%; background:var(--green); flex-shrink:0;}
+  .state-indicators{font-size:13px;}
+  .state-indicator-row{display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px solid #F0EDE5;}
+  .state-indicator-row:last-child{border-bottom:none;}
+  .state-indicator-row .ind-name{color:#666;}
+  .state-indicator-row .ind-val{font-family:'IBM Plex Mono',monospace; color:var(--ink); font-weight:500;}
+  .no-data{font-size:13px; color:#aaa; font-style:italic; padding:6px 0;}
+  .state-meta{font-size:11px; color:#999; margin-top:10px; font-family:'IBM Plex Mono',monospace;}
+  @media (max-width:880px){.state-grid{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:560px){.state-grid{grid-template-columns:1fr;}}
+
+  .roadmap-note{background:var(--sage); border-radius:8px; padding:20px 24px; font-size:13.5px; color:#3D5A47; margin-top:8px;}
+  .roadmap-note strong{color:var(--green-dark);}
+
+  /* GIS Map */
+  #mapContainer{height:480px; border-radius:8px; border:1px solid var(--line); z-index:1;}
+  .map-legend{display:flex; gap:24px; margin-bottom:14px; flex-wrap:wrap; font-size:13px; color:#555;}
+  .map-legend span{display:inline-flex; align-items:center; gap:7px;}
+  .legend-dot{width:11px; height:11px; border-radius:50%; display:inline-block;}
+  .leaflet-popup-content{font-family:'Inter',sans-serif; font-size:13.5px;}
+  .leaflet-popup-content strong{font-family:'Fraunces',serif; font-size:15px; color:var(--green-dark);}
+  .popup-row{display:flex; justify-content:space-between; padding:3px 0; font-family:'IBM Plex Mono',monospace; font-size:12px;}
+
+  footer{background:var(--green-dark); color:#C7CEC4; padding:32px 0; text-align:center; font-size:13px;}
+  footer a{color:var(--ochre);}
+</style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+
+<header>
+  <div class="navbar">
+    <div class="brand">
+      <img src="https://yxoilhablmbqpotuqmjv.supabase.co/storage/v1/object/public/site-assets/logo.png" alt="Federal Ministry of Women Affairs" class="brand-mark-img">
+      <div class="brand-text"><strong>Federal Ministry</strong>of Women Affairs</div>
+    </div>
+    <nav><a href="index.html">&larr; Back to Home</a></nav>
+  </div>
+</header>
+
+<section class="page-hero">
+  <div class="wrap">
+    <div class="eyebrow">Situation Room</div>
+    <h1>National &amp; State-Level Monitoring</h1>
+    <p>A live, verified view into the Ministry's work across all 36 states and the FCT. Every figure below has passed through the review and approval workflow before appearing here.</p>
+    <div class="live-tag"><span class="pulse"></span>Connected to live database</div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-eyebrow">National Dashboard</div>
+    <h2>Key indicators, nationwide</h2>
+    <p class="section-sub">Each card sums the most recent approved figure submitted for that indicator across every reporting state. Indicators with no approved data yet are marked honestly, not filled with placeholder numbers.</p>
+    <div class="nat-grid" id="natGrid">
+      <!-- populated by JS -->
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-eyebrow">Geographic View</div>
+    <h2>Map of reporting states</h2>
+    <p class="section-sub">Each marker sits on a state's capital. Green markers have at least one verified, approved figure on record; grey markers have no submissions yet. Click any marker for details.</p>
+    <div class="map-legend">
+      <span><span class="legend-dot" style="background:#1B8A4A;"></span>Has verified data</span>
+      <span><span class="legend-dot" style="background:#aaa;"></span>No data submitted yet</span>
+    </div>
+    <div id="mapContainer"></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-eyebrow">Data Trends</div>
+    <h2>Historical trend, by indicator</h2>
+    <p class="section-sub">Each point shows the national total for that indicator at the moment an update was approved, built directly from the real approval history, not simulated data. With only a few entries so far, lines will look sparse; they fill in naturally as more updates are approved over time.</p>
+    <div class="filter-bar">
+      <select id="trendIndicatorSelect"></select>
+    </div>
+    <div id="trendEmpty" class="no-data" style="display:none; padding:40px 0; text-align:center; font-size:14px;">No approved data yet for this indicator. Once updates are approved, this chart fills in automatically.</div>
+    <canvas id="trendChart" height="110"></canvas>
+  </div>
+</section>
+
+<section style="background:#F4EFE4;">
+  <div class="wrap">
+    <div class="section-eyebrow">State-Level Monitoring</div>
+    <h2>All 36 states + FCT</h2>
+    <p class="section-sub">Click into a state's card to see exactly what's been reported, by whom, and when. States with no submissions yet are shown plainly, not hidden.</p>
+    <div class="filter-bar">
+      <input type="text" id="stateSearch" placeholder="Search for a state...">
+      <span class="filter-count" id="filterCount"></span>
+    </div>
+    <div class="state-grid" id="stateGrid">
+      <!-- populated by JS -->
+    </div>
+    <div class="roadmap-note">
+      <strong>Coming in a later phase:</strong> the GIS map view, historical trend charts, incident reporting module, and automated severity alerts described in the build spec are not yet built. This page currently shows the live, verified data layer only.
+    </div>
+  </div>
+</section>
+
+<footer>
+  &copy; 2026 Federal Ministry of Women Affairs, Nigeria &middot; <a href="index.html">Back to Home</a>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script type="module">
+  import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+  const SUPABASE_URL = "https://yxoilhablmbqpotuqmjv.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_-Uix1i0CWZIzHCxQ4qK1rw_oP_b4dNp";
+  const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  const STATES = [
+    "Abia","Adamawa","Akwa Ibom","Anambra","Bauchi","Bayelsa","Benue","Borno",
+    "Cross River","Delta","Ebonyi","Edo","Ekiti","Enugu","FCT","Gombe","Imo",
+    "Jigawa","Kaduna","Kano","Katsina","Kebbi","Kogi","Kwara","Lagos","Nasarawa",
+    "Niger","Ogun","Ondo","Osun","Oyo","Plateau","Rivers","Sokoto","Taraba","Yobe","Zamfara"
+  ];
+
+  const INDICATORS = [
+    { key: "idp_count", label: "IDP Count" },
+    { key: "women_affected", label: "Women Affected" },
+    { key: "children_affected", label: "Children Affected" },
+    { key: "gbv_cases", label: "GBV Cases" },
+    { key: "interventions_conducted", label: "Humanitarian Interventions" },
+    { key: "support_centres", label: "Active Support Centres" },
+    { key: "relief_materials", label: "Relief Materials Distributed" }
+  ];
+
+  // [lat, lng] at each state's capital, used for map markers
+  const STATE_COORDS = {
+    "Abia": [5.43089, 7.524724], "Adamawa": [9.325049, 12.438058], "Akwa Ibom": [4.929986, 7.872159],
+    "Anambra": [6.275765, 7.006839], "Bauchi": [10.31583, 9.844166], "Bayelsa": [4.867776, 5.898713],
+    "Benue": [7.35082, 8.836275], "Borno": [11.509747, 12.978912], "Cross River": [6.167031, 8.660056],
+    "Delta": [5.532462, 5.898713], "Ebonyi": [6.17797, 7.959286], "Edo": [6.54381, 5.898713],
+    "Ekiti": [7.665581, 5.31025], "Enugu": [6.452667, 7.510332], "FCT": [8.855683, 7.179025],
+    "Gombe": [10.283333, 11.16666], "Imo": [5.521453, 6.920913], "Jigawa": [12.570031, 8.940058],
+    "Kaduna": [10.516667, 7.433332], "Kano": [12.002179, 8.591956], "Katsina": [12.983333, 7.6],
+    "Kebbi": [11.678124, 4.069545], "Kogi": [7.561891, 6.578338], "Kwara": [8.984799, 4.5624426],
+    "Lagos": [6.524379, 3.379205], "Nasarawa": [8.570515, 8.308844], "Niger": [9.081999, 8.675277],
+    "Ogun": [6.909833, 3.258362], "Ondo": [7.083333, 4.833333], "Osun": [7.587584, 4.562442],
+    "Oyo": [7.85, 3.933], "Plateau": [8.8583, 9.8965], "Rivers": [4.858076, 6.920913],
+    "Sokoto": [13.066667, 5.233333], "Taraba": [7.986875, 10.9807], "Yobe": [12.187141, 11.706829],
+    "Zamfara": [12.184415, 6.2375947]
+  };
+
+  let mapInstance = null;
+  let mapMarkers = {};
+
+  function timeAgo(dateStr) {
+    if (!dateStr) return '';
+    const diff = (Date.now() - new Date(dateStr).getTime()) / 1000;
+    if (diff < 60) return 'just now';
+    if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+    if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+    return Math.floor(diff/86400) + 'd ago';
+  }
+
+  // latestByStateIndicator[state][indicator] = { value, reason, submitted_by, approved_at }
+  let latestByStateIndicator = {};
+  let allApprovedRowsAsc = [];
+  let trendChartInstance = null;
+
+  async function loadAll() {
+    const { data, error } = await supabase
+      .from('pending_updates')
+      .select('*')
+      .eq('status', 'approved')
+      .order('approved_at', { ascending: false });
+
+    latestByStateIndicator = {};
+    if (data) {
+      data.forEach(d => {
+        if (!latestByStateIndicator[d.state]) latestByStateIndicator[d.state] = {};
+        if (!latestByStateIndicator[d.state][d.indicator]) {
+          latestByStateIndicator[d.state][d.indicator] = d;
+        }
+      });
+    }
+
+    // Keep the full approved history, oldest first, for trend computation
+    allApprovedRowsAsc = (data || []).slice().sort((a, b) => new Date(a.approved_at) - new Date(b.approved_at));
+
+    renderNational();
+    renderMap();
+    renderStates(document.getElementById('stateSearch').value);
+    renderTrendChart(document.getElementById('trendIndicatorSelect').value);
+  }
+
+  function computeTrendSeries(indicatorKey) {
+    // Walk approved history in time order, keeping a running "latest value per state"
+    // snapshot, and record the recalculated national total after each relevant event.
+    const runningPerState = {};
+    const points = [];
+    allApprovedRowsAsc.forEach(row => {
+      if (row.indicator !== indicatorKey) return;
+      runningPerState[row.state] = Number(row.new_value);
+      const total = Object.values(runningPerState).reduce((a, b) => a + b, 0);
+      points.push({ x: row.approved_at, y: total });
+    });
+    return points;
+  }
+
+  function renderTrendChart(indicatorKey) {
+    const points = computeTrendSeries(indicatorKey);
+    const emptyEl = document.getElementById('trendEmpty');
+    const canvas = document.getElementById('trendChart');
+
+    if (points.length === 0) {
+      emptyEl.style.display = 'block';
+      canvas.style.display = 'none';
+      return;
+    }
+    emptyEl.style.display = 'none';
+    canvas.style.display = 'block';
+
+    const indDef = INDICATORS.find(i => i.key === indicatorKey);
+    const labels = points.map(p => new Date(p.x).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }));
+    const values = points.map(p => p.y);
+
+    if (trendChartInstance) trendChartInstance.destroy();
+    trendChartInstance = new Chart(canvas.getContext('2d'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: indDef ? indDef.label : indicatorKey,
+          data: values,
+          borderColor: '#1B8A4A',
+          backgroundColor: 'rgba(27,138,74,0.1)',
+          fill: true,
+          tension: 0.25,
+          pointBackgroundColor: '#E0A52E',
+          pointRadius: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true, ticks: { font: { family: 'IBM Plex Mono' } } },
+          x: { ticks: { font: { family: 'IBM Plex Mono' }, maxRotation: 0 } }
+        }
+      }
+    });
+  }
+
+  function renderNational() {
+    const natGrid = document.getElementById('natGrid');
+    natGrid.innerHTML = '';
+    INDICATORS.forEach(ind => {
+      let total = 0;
+      let hasData = false;
+      Object.values(latestByStateIndicator).forEach(stateData => {
+        if (stateData[ind.key]) {
+          total += Number(stateData[ind.key].new_value);
+          hasData = true;
+        }
+      });
+      const card = document.createElement('div');
+      card.className = 'nat-card';
+      card.innerHTML = `
+        <div class="label">${ind.label}</div>
+        <div class="value ${hasData ? '' : 'empty'}">${hasData ? total.toLocaleString() : 'No data yet'}</div>
+      `;
+      natGrid.appendChild(card);
+    });
+  }
+
+  function renderMap() {
+    if (!mapInstance) {
+      mapInstance = L.map('mapContainer').setView([9.0, 8.0], 6);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors',
+        maxZoom: 10
+      }).addTo(mapInstance);
+    }
+
+    Object.values(mapMarkers).forEach(m => mapInstance.removeLayer(m));
+    mapMarkers = {};
+
+    Object.entries(STATE_COORDS).forEach(([state, coords]) => {
+      const data = latestByStateIndicator[state];
+      const hasData = data && Object.keys(data).length > 0;
+      const color = hasData ? '#1B8A4A' : '#aaaaaa';
+
+      const marker = L.circleMarker(coords, {
+        radius: hasData ? 9 : 6,
+        fillColor: color,
+        color: '#fff',
+        weight: 2,
+        fillOpacity: 0.9
+      }).addTo(mapInstance);
+
+      let popupHtml = `<strong>${state}</strong>`;
+      if (hasData) {
+        Object.entries(data).forEach(([key, d]) => {
+          const indDef = INDICATORS.find(i => i.key === key);
+          popupHtml += `<div class="popup-row"><span>${indDef ? indDef.label : key}</span><span>${Number(d.new_value).toLocaleString()}</span></div>`;
+        });
+      } else {
+        popupHtml += `<div style="font-size:12.5px; color:#999; margin-top:4px;">No data submitted yet</div>`;
+      }
+      marker.bindPopup(popupHtml);
+      mapMarkers[state] = marker;
+    });
+  }
+
+  function renderStates(filterText) {
+    const stateGrid = document.getElementById('stateGrid');
+    const filterCount = document.getElementById('filterCount');
+    const filtered = STATES.filter(s => s.toLowerCase().includes((filterText || '').toLowerCase()));
+    filterCount.textContent = `${filtered.length} of ${STATES.length} states`;
+
+    stateGrid.innerHTML = '';
+    filtered.forEach(state => {
+      const data = latestByStateIndicator[state];
+      const hasData = data && Object.keys(data).length > 0;
+      const card = document.createElement('div');
+      card.className = 'state-card' + (hasData ? ' has-data' : '');
+
+      let rowsHtml = '';
+      let mostRecent = null;
+      if (hasData) {
+        Object.entries(data).forEach(([key, d]) => {
+          const indDef = INDICATORS.find(i => i.key === key);
+          rowsHtml += `<div class="state-indicator-row"><span class="ind-name">${indDef ? indDef.label : key}</span><span class="ind-val">${Number(d.new_value).toLocaleString()}</span></div>`;
+          if (!mostRecent || new Date(d.approved_at) > new Date(mostRecent.approved_at)) mostRecent = d;
+        });
+      } else {
+        rowsHtml = '<div class="no-data">No data submitted yet</div>';
+      }
+
+      card.innerHTML = `
+        <div class="state-name">${state} ${hasData ? '<span class="verified-dot" title="Has verified data"></span>' : ''}</div>
+        <div class="state-indicators">${rowsHtml}</div>
+        ${mostRecent ? `<div class="state-meta">Updated ${timeAgo(mostRecent.approved_at)} &middot; ${mostRecent.submitted_by || ''}</div>` : ''}
+      `;
+      stateGrid.appendChild(card);
+    });
+  }
+
+  document.getElementById('stateSearch').addEventListener('input', (e) => {
+    renderStates(e.target.value);
+  });
+
+  // Populate the trend indicator dropdown
+  const trendSelect = document.getElementById('trendIndicatorSelect');
+  INDICATORS.forEach(ind => {
+    const opt = document.createElement('option');
+    opt.value = ind.key;
+    opt.textContent = ind.label;
+    trendSelect.appendChild(opt);
+  });
+  trendSelect.addEventListener('change', (e) => renderTrendChart(e.target.value));
+
+  loadAll();
+
+  supabase
+    .channel('situation_room_live')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'pending_updates' }, () => {
+      loadAll();
+    })
+    .subscribe();
+</script>
+
+</body>
+</html>
