@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Report an Issue &middot; Federal Ministry of Women Affairs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#1B8A4A; --green-dark:#0F5C32; --ochre:#E0A52E; --cream:#FBF8F2;
+    --terracotta:#C7512E; --ink:#232323; --line:#D9D2C2;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',sans-serif; background:var(--cream); color:var(--ink); line-height:1.6; -webkit-font-smoothing:antialiased;}
+  h1,h2{font-family:'Fraunces',serif;font-weight:600;}
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:680px;margin:0 auto;padding:0 24px;}
+
+  header{position:sticky; top:0; z-index:50; background:var(--cream); border-bottom:1px solid var(--line);}
+  .navbar{display:flex; align-items:center; justify-content:space-between; padding:14px 24px; max-width:1180px; margin:0 auto;}
+  .brand{display:flex; align-items:center; gap:10px;}
+  .brand-mark-img{width:38px; height:38px; object-fit:contain; flex-shrink:0;}
+  .brand-text{font-size:14px; line-height:1.25;}
+  .brand-text strong{display:block; font-size:15px;}
+  nav a{font-size:14px; font-weight:500; color:var(--green-dark);}
+  nav a:hover{color:var(--ochre);}
+
+  .page-hero{background:var(--green); color:var(--cream); padding:48px 0;}
+  .page-hero .eyebrow{font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--ochre); margin-bottom:10px;}
+  .page-hero h1{font-size:clamp(26px,3.6vw,36px);}
+  .page-hero p{margin-top:10px; max-width:560px; color:#E4E9E2; font-size:15px;}
+
+  section{padding:44px 0;}
+  .form-card{background:#fff; border:1px solid var(--line); border-radius:8px; padding:32px;}
+  label{display:block; font-size:12.5px; font-weight:600; color:var(--green-dark); margin-bottom:6px; text-transform:uppercase; letter-spacing:.04em;}
+  select, input, textarea{
+    width:100%; padding:12px 14px; border:1px solid var(--line); border-radius:4px; font-size:15px;
+    margin-bottom:20px; font-family:'Inter',sans-serif; background:#fff;
+  }
+  select:focus, input:focus, textarea:focus{outline:none; border-color:var(--green);}
+  .hint{font-size:12.5px; color:#888; margin-top:-14px; margin-bottom:18px;}
+  .btn{
+    width:100%; padding:14px; border:none; border-radius:4px; background:var(--ochre);
+    color:var(--green-dark); font-weight:700; font-size:15px; cursor:pointer; transition:background .15s ease;
+  }
+  .btn:hover{background:#F0B23E;}
+  #formMsg{font-size:14px; margin-top:16px; padding:12px 16px; border-radius:4px; display:none;}
+  #formMsg.ok{background:#E6F4EA; color:#1B6B36; display:block;}
+  #formMsg.err{background:#FBE4E4; color:#A12E2E; display:block;}
+
+  .privacy-note{background:var(--sage,#E8F3EC); border-radius:8px; padding:18px 22px; font-size:13.5px; color:#3D5A47; margin-top:24px;}
+  .privacy-note strong{color:var(--green-dark);}
+
+  .success-card{background:#fff; border:2px solid var(--green); border-radius:8px; padding:40px; text-align:center; display:none;}
+  .success-card h2{color:var(--green-dark); margin-bottom:10px;}
+  .success-card p{color:#555; font-size:14.5px;}
+
+  footer{background:var(--green-dark); color:#C7CEC4; padding:32px 0; text-align:center; font-size:13px;}
+  footer a{color:var(--ochre);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="navbar">
+    <div class="brand">
+      <img src="https://yxoilhablmbqpotuqmjv.supabase.co/storage/v1/object/public/site-assets/logo.png" alt="Federal Ministry of Women Affairs" class="brand-mark-img">
+      <div class="brand-text"><strong>Federal Ministry</strong>of Women Affairs</div>
+    </div>
+    <nav><a href="index.html">&larr; Back to Home</a></nav>
+  </div>
+</header>
+
+<section class="page-hero">
+  <div class="wrap">
+    <div class="eyebrow">Public Reporting Channel</div>
+    <h1>Report an Issue or Concern</h1>
+    <p>If you have information about a child protection concern, a gender-based violence case, a humanitarian situation, or anything else relevant to the Ministry's work, you can report it here. A staff member reviews every submission before any action is taken; nothing is published automatically.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="form-card" id="formCard">
+      <label for="category">What is this about?</label>
+      <select id="category">
+        <option value="GBV concern">Gender-Based Violence concern</option>
+        <option value="Child protection concern">Child protection concern</option>
+        <option value="Flooding / disaster">Flooding or disaster-related need</option>
+        <option value="Shelter / support centre issue">Shelter or support centre issue</option>
+        <option value="Other humanitarian need">Other humanitarian need</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <label for="state">Which state is this about?</label>
+      <select id="state">
+        <option>Abia</option><option>Adamawa</option><option>Akwa Ibom</option><option>Anambra</option>
+        <option>Bauchi</option><option>Bayelsa</option><option>Benue</option><option>Borno</option>
+        <option>Cross River</option><option>Delta</option><option>Ebonyi</option><option>Edo</option>
+        <option>Ekiti</option><option>Enugu</option><option>FCT</option><option>Gombe</option>
+        <option>Imo</option><option>Jigawa</option><option>Kaduna</option><option>Kano</option>
+        <option>Katsina</option><option>Kebbi</option><option>Kogi</option><option>Kwara</option>
+        <option>Lagos</option><option>Nasarawa</option><option>Niger</option><option>Ogun</option>
+        <option>Ondo</option><option>Osun</option><option>Oyo</option><option>Plateau</option>
+        <option>Rivers</option><option>Sokoto</option><option>Taraba</option><option>Yobe</option>
+        <option>Zamfara</option>
+      </select>
+
+      <label for="description">Please describe what you'd like to report</label>
+      <textarea id="description" rows="5" placeholder="Provide as much relevant detail as you can. Do not include the names of minors if reporting on their behalf."></textarea>
+
+      <label for="contact">Your contact information (optional)</label>
+      <input type="text" id="contact" placeholder="Phone or email, only if you're comfortable being contacted">
+      <p class="hint">Leave blank to report anonymously. This is never shown publicly either way.</p>
+
+      <button class="btn" id="submitBtn">Submit Report</button>
+      <p id="formMsg"></p>
+
+      <div class="privacy-note">
+        <strong>Privacy:</strong> Reports are only visible to authorised Ministry staff for review. They are never published publicly, and your contact information (if provided) is used only if a staff member needs to follow up with you directly.
+      </div>
+    </div>
+
+    <div class="success-card" id="successCard">
+      <h2>Thank you</h2>
+      <p>Your report has been received and will be reviewed by Ministry staff. If you provided contact information and follow-up is needed, you may be contacted.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  &copy; 2026 Federal Ministry of Women Affairs, Nigeria &middot; <a href="index.html">Back to Home</a>
+</footer>
+
+<script type="module">
+  import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+  const SUPABASE_URL = "https://yxoilhablmbqpotuqmjv.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_-Uix1i0CWZIzHCxQ4qK1rw_oP_b4dNp";
+  const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  document.getElementById('submitBtn').addEventListener('click', async () => {
+    const category = document.getElementById('category').value;
+    const state = document.getElementById('state').value;
+    const description = document.getElementById('description').value.trim();
+    const contact_info = document.getElementById('contact').value.trim();
+    const msg = document.getElementById('formMsg');
+
+    if (!description) {
+      msg.textContent = "Please describe what you'd like to report before submitting.";
+      msg.className = 'err';
+      return;
+    }
+
+    const { error } = await supabase.from('public_tips').insert({
+      category, state, description,
+      contact_info: contact_info || null,
+      status: 'new'
+    });
+
+    if (error) {
+      msg.textContent = "Something went wrong submitting your report: " + error.message;
+      msg.className = 'err';
+    } else {
+      document.getElementById('formCard').style.display = 'none';
+      document.getElementById('successCard').style.display = 'block';
+    }
+  });
+</script>
+
+</body>
+</html>
